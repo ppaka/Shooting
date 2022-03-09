@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private Animator _animator;
 
     public Bullet[] bullets;
-    public float[] fireDelays = {0.18f, 0.23f};
+    public float[] fireDelays = { 0.18f, 0.23f };
     public float timeSinceLastFire;
     public static IObjectPool<Bullet>[] BulletPools = new IObjectPool<Bullet>[5];
 
@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
             Debug.Log("죽음");
         }
     }
-    
+
     public void OnDamagedAlt(float damage)
     {
         _altHp -= damage;
@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
 
     private void SetAnimation(float value)
     {
-        _animator.SetInteger("Input", (int) value);
+        _animator.SetInteger("Input", (int)value);
     }
 
     private void StayInCamera()

@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
     {
         _hp = stat.maxHp;
     }
-    
+
     public void OnHit(int damage)
     {
         _hp -= damage;
@@ -26,15 +26,15 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
         if (col.CompareTag("Player"))
         {
-            player.OnDamaged(stat.enemyAtk/2);
+            player.OnDamaged(stat.enemyAtk / 2);
         }
         else if (col.CompareTag("EnemyBorder"))
         {
-            player.OnDamagedAlt(stat.enemyAtk/2);
+            player.OnDamagedAlt(stat.enemyAtk / 2);
             EnemyManager.EnemyPools[type].Release(this);
         }
     }
