@@ -24,7 +24,7 @@ public class EnemyManager : MonoBehaviour
                 enemy.gameObject.SetActive(true);
                 enemy.Setup();
             }, enemy => { enemy.gameObject.SetActive(false); },
-            enemy => { Destroy(enemy.gameObject); }, false, 20, 10000);
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
         SetupSpawn();
     }
 

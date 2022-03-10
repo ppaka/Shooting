@@ -42,21 +42,21 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            weaponLevel = 1;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            weaponLevel = 2;
-        }
+        if (Input.GetKeyDown(KeyCode.Alpha1)) UpgradeWeapon(1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
 
         Clock();
         if (Input.GetKey(KeyCode.X)) Fire(weaponLevel - 1);
         Move();
         StayInCamera();
+        BgScroll();
 
+        hpImage.fillAmount = _hp / maxHp;
+        altHpImage.fillAmount = _altHp / maxAltHp;
+    }
+
+    private void BgScroll()
+    {
         _offset += Time.deltaTime * scrollSpeed;
 
         var imgUVRect = img.uvRect;
@@ -70,9 +70,6 @@ public class Player : MonoBehaviour
         var img3UVRect = img3.uvRect;
         img3UVRect.y = _offset / 1.5f;
         img3.uvRect = img3UVRect;
-
-        hpImage.fillAmount = _hp / maxHp;
-        altHpImage.fillAmount = _altHp / maxAltHp;
     }
 
     public void OnDamaged(float damage)
@@ -99,6 +96,11 @@ public class Player : MonoBehaviour
     {
         timeSinceLastFire += Time.deltaTime;
         timeSinceLastHit += Time.deltaTime;
+    }
+
+    public void UpgradeWeapon(int level)
+    {
+        if (level >= 1 && level <= 5) weaponLevel = level;
     }
 
     private void Fire(int level)
