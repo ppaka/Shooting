@@ -6,8 +6,9 @@ using Random = UnityEngine.Random;
 public class EnemyManager : MonoBehaviour
 {
     public Enemy[] enemies;
-    public static IObjectPool<Enemy>[] EnemyPools = new IObjectPool<Enemy>[3];
+    public static IObjectPool<Enemy>[] EnemyPools = new IObjectPool<Enemy>[6];
     public Player player;
+    public ItemManager itemManager;
     public float maxSpawnDelay;
     public float curSpawnDelay;
     public int spawnPointRate = 8;
@@ -25,6 +26,47 @@ public class EnemyManager : MonoBehaviour
                 enemy.Setup();
             }, enemy => { enemy.gameObject.SetActive(false); },
             enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+        
+        EnemyPools[1] = new ObjectPool<Enemy>(() => Instantiate(enemies[1]),
+            enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.Setup();
+            }, enemy => { enemy.gameObject.SetActive(false); },
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+        
+        EnemyPools[2] = new ObjectPool<Enemy>(() => Instantiate(enemies[2]),
+            enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.Setup();
+            }, enemy => { enemy.gameObject.SetActive(false); },
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+        
+        EnemyPools[3] = new ObjectPool<Enemy>(() => Instantiate(enemies[3]),
+            enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.Setup();
+            }, enemy => { enemy.gameObject.SetActive(false); },
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+
+        EnemyPools[4] = new ObjectPool<Enemy>(() => Instantiate(enemies[4]),
+            enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.Setup();
+            }, enemy => { enemy.gameObject.SetActive(false); },
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+        
+        EnemyPools[5] = new ObjectPool<Enemy>(() => Instantiate(enemies[5]),
+            enemy =>
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.Setup();
+            }, enemy => { enemy.gameObject.SetActive(false); },
+            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
+        
         SetupSpawn();
     }
 
@@ -46,7 +88,12 @@ public class EnemyManager : MonoBehaviour
 
         if (curSpawnDelay > maxSpawnDelay)
         {
-            Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            /*Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(1, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(2, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(3, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(4, spawnPoints[Random.Range(0, spawnPoints.Count)]);*/
             maxSpawnDelay = Random.Range(minDelay, maxDelay);
             curSpawnDelay = 0;
         }
@@ -57,5 +104,6 @@ public class EnemyManager : MonoBehaviour
         var i = EnemyPools[type].Get();
         i.transform.position = position;
         i.player = player;
+        i.itemManager = itemManager;
     }
 }

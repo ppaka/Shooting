@@ -5,11 +5,13 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float speed = 3;
+    public int stage = 1;
     public int weaponLevel = 1;
-    private float _hp, _altHp;
+    public float hp, altHp;
     public float maxHp, maxAltHp;
     public float timeSinceLastHit;
-    private float _invincibleTime = 1.5f;
+    public float invincibleTime = 1.5f;
+    private float _invincibleEffectTime = 2.5f;
     private Camera _camera;
     private Animator _animator;
 
@@ -33,8 +35,9 @@ public class Player : MonoBehaviour
             bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, false, 20, 10000);
 
-        _hp = maxHp;
-        _altHp = maxAltHp;
+        hp = maxHp;
+        if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
+        else if (stage == 2) altHp = maxAltHp - maxAltHp * 0.3f;
 
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
@@ -46,13 +49,13 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
 
         Clock();
-        if (Input.GetKey(KeyCode.X)) Fire(weaponLevel - 1);
+        if (Input.GetKey(KeyCode.X)) Fire(weaponLevel);
         Move();
         StayInCamera();
         BgScroll();
 
-        hpImage.fillAmount = _hp / maxHp;
-        altHpImage.fillAmount = _altHp / maxAltHp;
+        hpImage.fillAmount = hp / maxHp;
+        altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
     }
 
     private void BgScroll()
@@ -74,10 +77,10 @@ public class Player : MonoBehaviour
 
     public void OnDamaged(float damage)
     {
-        if (timeSinceLastHit <= _invincibleTime) return;
+        if (timeSinceLastHit <= invincibleTime) return;
         timeSinceLastHit = 0;
-        _hp -= damage;
-        if (_hp <= 0)
+        hp -= damage;
+        if (hp <= 0)
         {
             Debug.Log("죽음");
         }
@@ -85,8 +88,8 @@ public class Player : MonoBehaviour
 
     public void OnDamagedAlt(float damage)
     {
-        _altHp -= damage;
-        if (_altHp <= 0)
+        altHp -= damage;
+        if (altHp <= 0)
         {
             Debug.Log("보조 체력 죽음");
         }
@@ -100,15 +103,15 @@ public class Player : MonoBehaviour
 
     public void UpgradeWeapon(int level)
     {
-        if (level >= 1 && level <= 5) weaponLevel = level;
+        if (level >= 1 && level <= BulletPools.Length) weaponLevel = level;
     }
 
     private void Fire(int level)
     {
-        if (timeSinceLastFire > fireDelays[level])
+        if (timeSinceLastFire > fireDelays[level-1])
         {
             timeSinceLastFire = 0;
-            var bullet = BulletPools[level].Get();
+            var bullet = BulletPools[level-1].Get();
             bullet.transform.position = transform.position;
         }
     }

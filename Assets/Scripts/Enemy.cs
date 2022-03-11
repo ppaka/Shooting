@@ -1,11 +1,22 @@
 using UnityEngine;
 
+public enum EnemyType
+{
+    Enemy1,
+    Enemy2,
+    Enemy3,
+    Enemy4,
+    Npc1,
+    Npc2
+}
+
 public class Enemy : MonoBehaviour
 {
     public EnemyStat stat;
     private float _hp;
-    public int type;
+    public EnemyType type;
     public Player player;
+    public ItemManager itemManager;
 
     private void Update()
     {
@@ -22,7 +33,17 @@ public class Enemy : MonoBehaviour
         _hp -= damage;
         if (_hp <= 0)
         {
-            EnemyManager.EnemyPools[type].Release(this);
+            if (type == EnemyType.Npc1)
+            {
+                var random = Random.Range(1f, 100f);
+                if (random >= 70) itemManager.RandomItem(transform.position);
+            }
+            if (type == EnemyType.Npc2)
+            {
+                var random = Random.Range(85f, 100f)* 0.01f;
+                player.OnDamagedAlt(stat.enemyAtk * random);
+            }
+            EnemyManager.EnemyPools[(int)type].Release(this);
         }
     }
 
@@ -30,12 +51,17 @@ public class Enemy : MonoBehaviour
     {
         if (col.CompareTag("Player"))
         {
+            if (type == EnemyType.Npc1)
+            {
+                itemManager.RandomItem(transform.position);
+                EnemyManager.EnemyPools[(int)type].Release(this);
+            }
             player.OnDamaged(stat.enemyAtk / 2);
         }
         else if (col.CompareTag("EnemyBorder"))
         {
             player.OnDamagedAlt(stat.enemyAtk / 2);
-            EnemyManager.EnemyPools[type].Release(this);
+            EnemyManager.EnemyPools[(int)type].Release(this);
         }
     }
 }

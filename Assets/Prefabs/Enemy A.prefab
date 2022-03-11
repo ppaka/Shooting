@@ -151,3 +151,5 @@ MonoBehaviour:
     moveSpeed: 1.8
     enemyAtk: 2
   type: 0
+  player: {fileID: 0}
+  itemManager: {fileID: 0}
