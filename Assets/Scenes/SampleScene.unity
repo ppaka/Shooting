@@ -489,7 +489,7 @@ GameObject:
   - component: {fileID: 438529449}
   - component: {fileID: 438529448}
   m_Layer: 5
-  m_Name: BG Canvas
+  m_Name: UI Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1539,7 +1539,7 @@ GameObject:
   - component: {fileID: 1986605086}
   - component: {fileID: 1986605085}
   m_Layer: 5
-  m_Name: UI Canvas
+  m_Name: BG Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
