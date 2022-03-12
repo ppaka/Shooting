@@ -43,6 +43,10 @@ public class Enemy : MonoBehaviour
                 var random = Random.Range(85f, 100f)* 0.01f;
                 player.OnDamagedAlt(stat.enemyAtk * random);
             }
+            else
+            {
+                player.AddScore(stat.maxHp * 100);
+            }
             EnemyManager.EnemyPools[(int)type].Release(this);
         }
     }

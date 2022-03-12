@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public float score;
+    
     public float speed = 3;
     public int stage = 1;
     public int weaponLevel = 1;
@@ -25,6 +28,7 @@ public class Player : MonoBehaviour
     public RawImage img, img2, img3;
 
     public Image hpImage, altHpImage;
+    public Text scoreText;
 
     private void Awake()
     {
@@ -62,13 +66,17 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha5)) UpgradeWeapon(5);
 
         Clock();
-        if (Input.GetKey(KeyCode.X)) Fire(weaponLevel);
         Move();
         StayInCamera();
         BgScroll();
 
         hpImage.fillAmount = hp / maxHp;
         altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
+    }
+
+    private void FixedUpdate()
+    {
+        if (Input.GetKey(KeyCode.X)) Fire(weaponLevel);
     }
 
     private void BgScroll()
@@ -88,6 +96,12 @@ public class Player : MonoBehaviour
         img3.uvRect = img3UVRect;
     }
 
+    public void AddScore(float value)
+    {
+        score += value;
+        scoreText.text = score.ToString();
+    }
+    
     public void OnDamaged(float damage)
     {
         if (timeSinceLastHit <= invincibleTime) return;
