@@ -15,10 +15,10 @@ public class Player : MonoBehaviour
     private Camera _camera;
     private Animator _animator;
 
-    public Bullet[] bullets;
+    public GameObject[] bullets;
     public float[] fireDelays = { 0.18f, 0.23f };
     public float timeSinceLastFire;
-    public static IObjectPool<Bullet>[] BulletPools = new IObjectPool<Bullet>[5];
+    public static IObjectPool<GameObject>[] BulletPools = new IObjectPool<GameObject>[5];
 
     private float _offset;
     public float scrollSpeed = 0.5f;
@@ -28,16 +28,26 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        BulletPools[0] = new ObjectPool<Bullet>(() => Instantiate(bullets[0]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, false, 20, 10000);
-        BulletPools[1] = new ObjectPool<Bullet>(() => Instantiate(bullets[1]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, false, 20, 10000);
-
-        hp = maxHp;
+        BulletPools[0] = new ObjectPool<GameObject>(() => Instantiate(bullets[0]),
+            go => { go.SetActive(true); }, go => { go.SetActive(false); },
+            go => { Destroy(go); }, true, 20, 10000);
+        BulletPools[1] = new ObjectPool<GameObject>(() => Instantiate(bullets[1]),
+            go => { go.SetActive(true); }, go => { go.SetActive(false); },
+            go => { Destroy(go); }, true, 20, 10000);
+        BulletPools[2] = new ObjectPool<GameObject>(() => Instantiate(bullets[2]),
+            go => { go.SetActive(true); }, go => { go.SetActive(false); },
+            go => { Destroy(go); }, true, 20, 10000);
+        BulletPools[3] = new ObjectPool<GameObject>(() => Instantiate(bullets[3]),
+            go => { go.SetActive(true); }, go => { go.SetActive(false); },
+            go => { Destroy(go); }, true, 20, 10000);
+        BulletPools[4] = new ObjectPool<GameObject>(() => Instantiate(bullets[4]),
+            go => { go.SetActive(true); }, go => { go.SetActive(false); },
+            go => { Destroy(go); }, true, 20, 10000);
+        
         if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
         else if (stage == 2) altHp = maxAltHp - maxAltHp * 0.3f;
+
+        hp = maxHp;
 
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
@@ -47,6 +57,9 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) UpgradeWeapon(1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) UpgradeWeapon(3);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) UpgradeWeapon(4);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) UpgradeWeapon(5);
 
         Clock();
         if (Input.GetKey(KeyCode.X)) Fire(weaponLevel);

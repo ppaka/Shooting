@@ -77,7 +77,7 @@ public class EnemyManager : MonoBehaviour
 
         for (var i = 0; i < spawnPointRate; i++)
         {
-            spawnPoints.Add(new Vector3(nextSpawnPointPos, 7, 0));
+            spawnPoints.Add(new Vector3(nextSpawnPointPos, 5.2f, 0));
             nextSpawnPointPos += rate;
         }
     }

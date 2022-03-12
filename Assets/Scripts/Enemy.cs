@@ -56,12 +56,22 @@ public class Enemy : MonoBehaviour
                 itemManager.RandomItem(transform.position);
                 EnemyManager.EnemyPools[(int)type].Release(this);
             }
-            player.OnDamaged(stat.enemyAtk / 2);
+            else if (type == EnemyType.Npc2)
+            {
+                player.OnDamagedAlt(stat.enemyAtk / 2);
+            }
+            else
+            {
+                player.OnDamaged(stat.enemyAtk / 2);
+            }
         }
         else if (col.CompareTag("EnemyBorder"))
         {
-            player.OnDamagedAlt(stat.enemyAtk / 2);
-            EnemyManager.EnemyPools[(int)type].Release(this);
+            if (type != EnemyType.Npc2)
+            {
+                player.OnDamagedAlt(stat.enemyAtk / 2);
+                EnemyManager.EnemyPools[(int)type].Release(this);
+            }
         }
     }
 }

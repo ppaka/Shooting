@@ -42,6 +42,7 @@ public class Item : MonoBehaviour
                 player.altHp += player.maxAltHp * 0.25f;
                 player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
             }
+            Destroy(gameObject);
         }
     }
 }

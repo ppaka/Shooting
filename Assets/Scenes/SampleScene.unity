@@ -1332,16 +1332,22 @@ MonoBehaviour:
   weaponLevel: 1
   hp: 0
   altHp: 0
-  maxHp: 2
-  maxAltHp: 4
+  maxHp: 20
+  maxAltHp: 20
   timeSinceLastHit: 0
   invincibleTime: 1.5
   bullets:
-  - {fileID: 836671174, guid: f08f0587a8bfcf54f83196689afdc00f, type: 3}
-  - {fileID: 808533601, guid: b541ec1e573ec154d80299d3c3548052, type: 3}
+  - {fileID: 8724390124976326711, guid: f08f0587a8bfcf54f83196689afdc00f, type: 3}
+  - {fileID: 3395892907411275172, guid: b541ec1e573ec154d80299d3c3548052, type: 3}
+  - {fileID: 3031904316565884389, guid: c4c1fe16fb792d84b8a2e53ed1c09980, type: 3}
+  - {fileID: 3419708006501906924, guid: 926ec002552a1b140a9f798881d66562, type: 3}
+  - {fileID: 3419708006501906924, guid: 85473c870eaa87c42bfcf043b2a20fa2, type: 3}
   fireDelays:
   - 0.18
   - 0.23
+  - 0.18
+  - 0.2
+  - 0.03
   timeSinceLastFire: 0
   scrollSpeed: 0.17
   img: {fileID: 971586631}
