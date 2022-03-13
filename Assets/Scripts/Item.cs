@@ -31,6 +31,7 @@ public class Item : MonoBehaviour
             {
                 player.timeSinceLastHit = 0;
                 player.invincibleTime = 3;
+                player.invincibleEffectTime = 2.5f;
             }
             else if (type == ItemType.Heal)
             {
@@ -42,6 +43,7 @@ public class Item : MonoBehaviour
                 player.altHp += player.maxAltHp * 0.25f;
                 player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
             }
+            player.AddScore(100);
             Destroy(gameObject);
         }
     }

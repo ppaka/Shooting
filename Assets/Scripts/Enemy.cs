@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public enum EnemyType
 {
@@ -14,6 +15,7 @@ public class Enemy : MonoBehaviour
 {
     public EnemyStat stat;
     private float _hp;
+    public float timeSinceFire;
     public EnemyType type;
     public Player player;
     public ItemManager itemManager;
@@ -36,12 +38,11 @@ public class Enemy : MonoBehaviour
             if (type == EnemyType.Npc1)
             {
                 var random = Random.Range(1f, 100f);
-                if (random >= 70) itemManager.RandomItem(transform.position);
+                if (random >= 50) itemManager.RandomItem(transform.position);
             }
             if (type == EnemyType.Npc2)
             {
-                var random = Random.Range(85f, 100f)* 0.01f;
-                player.OnDamagedAlt(stat.enemyAtk * random);
+                player.OnDamagedAlt(stat.enemyAtk);
             }
             else
             {
@@ -57,12 +58,14 @@ public class Enemy : MonoBehaviour
         {
             if (type == EnemyType.Npc1)
             {
-                itemManager.RandomItem(transform.position);
+                var random = Random.Range(1f, 100f);
+                if (random >= 50) itemManager.RandomItem(transform.position);
                 EnemyManager.EnemyPools[(int)type].Release(this);
             }
             else if (type == EnemyType.Npc2)
             {
-                player.OnDamagedAlt(stat.enemyAtk / 2);
+                player.OnDamagedAlt(stat.enemyAtk);
+                EnemyManager.EnemyPools[(int)type].Release(this);
             }
             else
             {
@@ -71,7 +74,11 @@ public class Enemy : MonoBehaviour
         }
         else if (col.CompareTag("EnemyBorder"))
         {
-            if (type != EnemyType.Npc2)
+            if (type == EnemyType.Npc1 || type == EnemyType.Npc2)
+            {
+                EnemyManager.EnemyPools[(int)type].Release(this);
+            }
+            else
             {
                 player.OnDamagedAlt(stat.enemyAtk / 2);
                 EnemyManager.EnemyPools[(int)type].Release(this);

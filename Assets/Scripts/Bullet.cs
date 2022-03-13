@@ -1,38 +1,40 @@
 using UnityEngine;
 
+public enum BulletOwner
+{
+    Player,
+    Enemy,
+    BossOne,
+    BossTwo
+}
+
 public class Bullet : MonoBehaviour
 {
     public BulletStat stat;
     public int level;
-    public bool triggered;
-
-    private void OnEnable()
-    {
-        triggered = false;
-    }
+    public BulletOwner owner = BulletOwner.Player;
+    public Vector3 direction, startPos, endPos;
+    public float startTime, speed;
 
     private void Update()
     {
-        transform.position += new Vector3(0, 1, 0) * stat.speed * Time.deltaTime;
+        if (owner != BulletOwner.BossOne && owner != BulletOwner.BossTwo) transform.position += direction * stat.speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("BulletBorder"))
         {
-            if (!triggered)
-            {
-                triggered = true;
-                Player.BulletPools[level - 1].Release(gameObject);
-            }
+            if (owner == BulletOwner.Player) Player.BulletPools[level - 1].Release(this);
+            else if(owner == BulletOwner.Enemy) EnemyManager.BulletPool.Release(this);
         }
         else if (other.CompareTag("Enemy"))
         {
-            if (!triggered)
-            {
-                triggered = true;
-                other.GetComponent<Enemy>().OnHit(stat.atk);
-            }
+            if (owner == BulletOwner.Player) other.GetComponent<Enemy>().OnHit(stat.atk);
+        }
+        else if (other.CompareTag("Player"))
+        {
+            if (owner == BulletOwner.Enemy || owner == BulletOwner.BossOne || owner == BulletOwner.BossTwo) other.GetComponent<Player>().OnDamaged(stat.atk);
         }
     }
 }

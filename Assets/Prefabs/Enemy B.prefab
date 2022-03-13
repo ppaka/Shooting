@@ -147,9 +147,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stat:
-    maxHp: 4
+    maxHp: 6
     moveSpeed: 2
-    enemyAtk: 4
+    enemyAtk: 3
+    fireDelay: 2
+  timeSinceFire: 0
   type: 1
   player: {fileID: 0}
   itemManager: {fileID: 0}

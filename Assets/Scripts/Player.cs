@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
@@ -6,7 +5,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float score;
-    
+
     public float speed = 3;
     public int stage = 1;
     public int weaponLevel = 1;
@@ -14,14 +13,15 @@ public class Player : MonoBehaviour
     public float maxHp, maxAltHp;
     public float timeSinceLastHit;
     public float invincibleTime = 1.5f;
-    private float _invincibleEffectTime = 2.5f;
+    public float invincibleEffectTime = 1.5f;
     private Camera _camera;
     private Animator _animator;
+    private SpriteRenderer _sr;
 
-    public GameObject[] bullets;
-    public float[] fireDelays = { 0.18f, 0.23f };
+    public Bullet[] bullets;
+    public float[] fireDelays = { 0.18f, 0.23f, 0.18f, 0.2f, 0.03f };
     public float timeSinceLastFire;
-    public static IObjectPool<GameObject>[] BulletPools = new IObjectPool<GameObject>[5];
+    public static IObjectPool<Bullet>[] BulletPools = new IObjectPool<Bullet>[5];
 
     private float _offset;
     public float scrollSpeed = 0.5f;
@@ -32,29 +32,61 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        BulletPools[0] = new ObjectPool<GameObject>(() => Instantiate(bullets[0]),
-            go => { go.SetActive(true); }, go => { go.SetActive(false); },
-            go => { Destroy(go); }, true, 20, 10000);
-        BulletPools[1] = new ObjectPool<GameObject>(() => Instantiate(bullets[1]),
-            go => { go.SetActive(true); }, go => { go.SetActive(false); },
-            go => { Destroy(go); }, true, 20, 10000);
-        BulletPools[2] = new ObjectPool<GameObject>(() => Instantiate(bullets[2]),
-            go => { go.SetActive(true); }, go => { go.SetActive(false); },
-            go => { Destroy(go); }, true, 20, 10000);
-        BulletPools[3] = new ObjectPool<GameObject>(() => Instantiate(bullets[3]),
-            go => { go.SetActive(true); }, go => { go.SetActive(false); },
-            go => { Destroy(go); }, true, 20, 10000);
-        BulletPools[4] = new ObjectPool<GameObject>(() => Instantiate(bullets[4]),
-            go => { go.SetActive(true); }, go => { go.SetActive(false); },
-            go => { Destroy(go); }, true, 20, 10000);
-        
+        BulletPools[0] = new ObjectPool<Bullet>(() => Instantiate(bullets[0]),
+            bullet =>
+            {
+                bullet.gameObject.SetActive(true);
+            }, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+            },
+            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
+        BulletPools[1] = new ObjectPool<Bullet>(() => Instantiate(bullets[1]),
+            bullet =>
+            {
+                bullet.gameObject.SetActive(true);
+            }, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+            },
+            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
+        BulletPools[2] = new ObjectPool<Bullet>(() => Instantiate(bullets[2]),
+            bullet =>
+            {
+                bullet.gameObject.SetActive(true);
+            }, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+            },
+            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
+        BulletPools[3] = new ObjectPool<Bullet>(() => Instantiate(bullets[3]),
+            bullet =>
+            {
+                bullet.gameObject.SetActive(true);
+            }, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+            },
+            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
+        BulletPools[4] = new ObjectPool<Bullet>(() => Instantiate(bullets[4]),
+            bullet =>
+            {
+                bullet.gameObject.SetActive(true);
+            }, bullet =>
+            {
+                bullet.gameObject.SetActive(false);
+            },
+            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
+
         if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
         else if (stage == 2) altHp = maxAltHp - maxAltHp * 0.3f;
 
         hp = maxHp;
+        timeSinceLastHit = 10;
 
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
+        _sr = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -66,6 +98,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha5)) UpgradeWeapon(5);
 
         Clock();
+        InvincibleEffect();
         Move();
         StayInCamera();
         BgScroll();
@@ -77,6 +110,23 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.X)) Fire(weaponLevel);
+    }
+
+    private void InvincibleEffect()
+    {
+        if (timeSinceLastHit <= invincibleEffectTime)
+        {
+            var i = Mathf.Sin(timeSinceLastHit * 3.14f * 10) * 255;
+            var srColor = _sr.color;
+            srColor.a = i / 255;
+            _sr.color = srColor;
+        }
+        else
+        {
+            var srColor = _sr.color;
+            srColor.a = 1;
+            _sr.color = srColor;
+        }
     }
 
     private void BgScroll()
@@ -101,11 +151,13 @@ public class Player : MonoBehaviour
         score += value;
         scoreText.text = score.ToString();
     }
-    
+
     public void OnDamaged(float damage)
     {
         if (timeSinceLastHit <= invincibleTime) return;
         timeSinceLastHit = 0;
+        invincibleEffectTime = 1.5f;
+        invincibleTime = 1.5f;
         hp -= damage;
         if (hp <= 0)
         {
@@ -135,10 +187,10 @@ public class Player : MonoBehaviour
 
     private void Fire(int level)
     {
-        if (timeSinceLastFire > fireDelays[level-1])
+        if (timeSinceLastFire > fireDelays[level - 1])
         {
             timeSinceLastFire = 0;
-            var bullet = BulletPools[level-1].Get();
+            var bullet = BulletPools[level - 1].Get();
             bullet.transform.position = transform.position;
         }
     }

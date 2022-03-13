@@ -149,7 +149,9 @@ MonoBehaviour:
   stat:
     maxHp: 8
     moveSpeed: 1.5
-    enemyAtk: 4
+    enemyAtk: 2
+    fireDelay: 2
+  timeSinceFire: 0
   type: 2
   player: {fileID: 0}
   itemManager: {fileID: 0}
