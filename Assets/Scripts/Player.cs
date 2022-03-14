@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     public RawImage img, img2, img3;
 
     public Image hpImage, altHpImage;
-    public Text scoreText;
+    public Text scoreText, hpText, altHpText;
 
     private void Awake()
     {
@@ -104,6 +104,8 @@ public class Player : MonoBehaviour
         BgScroll();
 
         hpImage.fillAmount = hp / maxHp;
+        hpText.text = (hp / maxHp * 100).ToString();
+        altHpText.text = (Mathf.Abs(altHp - maxAltHp) / maxAltHp * 100).ToString();
         altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
     }
 
