@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,14 +11,18 @@ public class BossOne : MonoBehaviour
     public Bullet prefab;
     public GameObject canon1, canon2;
     public GameObject moveEnd1;
+    public EnemyManager enemyManager;
     public float gameTime;
     private bool _startPattern;
+
+    public int hp, maxHp;
 
     private void Awake()
     {
         BulletPool = new ObjectPool<Bullet>(() => Instantiate(prefab),
             bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20);
+        hp = maxHp;
     }
 
     private void OnEnable()
@@ -25,6 +30,20 @@ public class BossOne : MonoBehaviour
         var pos = transform.position;
         pos.y = 8;
         transform.position = pos;
+    }
+
+    public void OnHit(int dmg)
+    {
+        hp -= dmg;
+        if (hp <= 0)
+        {
+            gameObject.SetActive(false);
+            foreach (var bullet in spawnedBullet)
+            {
+                BulletPool.Release(bullet);
+            }
+            enemyManager.NextStage(2);
+        }
     }
 
     private void Update()

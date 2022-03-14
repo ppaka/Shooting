@@ -36,5 +36,9 @@ public class Bullet : MonoBehaviour
         {
             if (owner == BulletOwner.Enemy || owner == BulletOwner.BossOne || owner == BulletOwner.BossTwo) other.GetComponent<Player>().OnDamaged(stat.atk);
         }
+        else if (other.CompareTag("Boss"))
+        {
+            if (owner == BulletOwner.Player) other.GetComponent<BossOne>().OnHit(stat.atk);
+        }
     }
 }

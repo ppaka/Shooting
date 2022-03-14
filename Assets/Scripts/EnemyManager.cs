@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyManager : MonoBehaviour
@@ -14,17 +17,21 @@ public class EnemyManager : MonoBehaviour
     public int spawnPointRate = 8;
     public List<Vector3> spawnPoints = new();
 
-    public int enemyCount = 0, maxEnemyCount = 20;
+    public int enemyCount = 0, maxStageOneEnemyCount = 20, maxStageTwoEnemyCount = 40;
 
     [Header("SpawnDelaySettings", order = 2)]
     public float maxDelay;
-
     public float minDelay;
 
     public List<Enemy> spawnedEnemies = new();
     public static IObjectPool<Bullet> BulletPool;
     public Bullet enemyBulletPrefab;
     public BossOne bossOne;
+    public bool bossOneDead, bossTwoDead;
+
+    public Image[] images;
+    private float _waitingDelay;
+    public GameObject resultCanvas;
 
     private void Awake()
     {
@@ -127,11 +134,48 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public void NextStage(int stageNum)
+    {
+        bossOneDead = true;
+        bossTwoDead = true;
+        StartCoroutine(StageDelay(stageNum));
+    }
+
+    private IEnumerator StageDelay(int stageNum)
+    {
+        resultCanvas.SetActive(true);
+        _waitingDelay = 1;
+        while (_waitingDelay >= 0)
+        {
+            _waitingDelay -= Time.deltaTime * 0.25f;
+            images[0].fillAmount = _waitingDelay;
+            images[1].fillAmount = _waitingDelay;
+            yield return new WaitForEndOfFrame();
+        }
+        resultCanvas.SetActive(false);
+
+        player.stage = stageNum;
+        bossOneDead = false;
+        bossTwoDead = false;
+        yield return null;
+    }
+
     private void Update()
     {
         curSpawnDelay += Time.deltaTime;
 
-        if (curSpawnDelay > maxSpawnDelay && enemyCount < maxEnemyCount)
+        if (player.stage == 1 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageOneEnemyCount)
+        {
+            Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            /*Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(1, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(2, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(3, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            Spawn(4, spawnPoints[Random.Range(0, spawnPoints.Count)]);*/
+            maxSpawnDelay = Random.Range(minDelay, maxDelay);
+            curSpawnDelay = 0;
+            enemyCount++;
+        }else if (player.stage == 2 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageTwoEnemyCount)
         {
             Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
             /*Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
@@ -144,9 +188,16 @@ public class EnemyManager : MonoBehaviour
             enemyCount++;
         }
 
-        if (enemyCount >= maxEnemyCount)
+        if (player.stage == 1 && enemyCount >= maxStageOneEnemyCount)
         {
-            if (player.stage == 1)
+            if (!bossOneDead)
+            {
+                bossOne.gameObject.SetActive(true);
+            }
+        }
+        else if(player.stage == 2 && enemyCount >= maxStageTwoEnemyCount)
+        {
+            if (!bossTwoDead)
             {
                 bossOne.gameObject.SetActive(true);
             }
