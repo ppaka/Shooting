@@ -38,7 +38,11 @@ public class Bullet : MonoBehaviour
         }
         else if (other.CompareTag("Boss"))
         {
-            if (owner == BulletOwner.Player) other.GetComponent<BossOne>().OnHit(stat.atk);
+            if (owner == BulletOwner.Player)
+            {
+                if(other.TryGetComponent<BossOne>(out var bossOne)) bossOne.OnHit(stat.atk);
+                else if (other.TryGetComponent<BossTwo>(out var bossTwo)) bossTwo.OnHit(stat.atk);
+            }
         }
     }
 }

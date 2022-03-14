@@ -27,55 +27,30 @@ public class Player : MonoBehaviour
     public float scrollSpeed = 0.5f;
     public RawImage img, img2, img3;
 
+    public GameObject uiCanvas, introCanvas;
     public Image hpImage, altHpImage;
     public Text scoreText, hpText, altHpText;
 
+    public bool gameStarted;
+
     private void Awake()
     {
+        Time.timeScale = 0;
+
         BulletPools[0] = new ObjectPool<Bullet>(() => Instantiate(bullets[0]),
-            bullet =>
-            {
-                bullet.gameObject.SetActive(true);
-            }, bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
+            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
         BulletPools[1] = new ObjectPool<Bullet>(() => Instantiate(bullets[1]),
-            bullet =>
-            {
-                bullet.gameObject.SetActive(true);
-            }, bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
+            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
         BulletPools[2] = new ObjectPool<Bullet>(() => Instantiate(bullets[2]),
-            bullet =>
-            {
-                bullet.gameObject.SetActive(true);
-            }, bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
+            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
         BulletPools[3] = new ObjectPool<Bullet>(() => Instantiate(bullets[3]),
-            bullet =>
-            {
-                bullet.gameObject.SetActive(true);
-            }, bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
+            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
         BulletPools[4] = new ObjectPool<Bullet>(() => Instantiate(bullets[4]),
-            bullet =>
-            {
-                bullet.gameObject.SetActive(true);
-            }, bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
+            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
             bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
 
         if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
@@ -91,6 +66,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (!gameStarted)
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) StartGame();
+            else return;
+        }
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) UpgradeWeapon(1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
         if (Input.GetKeyDown(KeyCode.Alpha3)) UpgradeWeapon(3);
@@ -103,10 +84,18 @@ public class Player : MonoBehaviour
         StayInCamera();
         BgScroll();
 
-        hpImage.fillAmount = hp / maxHp;
         hpText.text = (hp / maxHp * 100).ToString();
         altHpText.text = (Mathf.Abs(altHp - maxAltHp) / maxAltHp * 100).ToString();
+        hpImage.fillAmount = hp / maxHp;
         altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
+    }
+
+    private void StartGame()
+    {
+        gameStarted = true;
+        uiCanvas.SetActive(true);
+        introCanvas.SetActive(false);
+        Time.timeScale = 1;
     }
 
     private void FixedUpdate()

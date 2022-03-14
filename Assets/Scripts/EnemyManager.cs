@@ -27,6 +27,7 @@ public class EnemyManager : MonoBehaviour
     public static IObjectPool<Bullet> BulletPool;
     public Bullet enemyBulletPrefab;
     public BossOne bossOne;
+    public BossTwo bossTwo;
     public bool bossOneDead, bossTwoDead;
 
     public Image[] images;
@@ -162,6 +163,7 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
+        if (!player.gameStarted) return;
         curSpawnDelay += Time.deltaTime;
 
         if (player.stage == 1 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageOneEnemyCount)
@@ -199,7 +201,7 @@ public class EnemyManager : MonoBehaviour
         {
             if (!bossTwoDead)
             {
-                bossOne.gameObject.SetActive(true);
+                bossTwo.gameObject.SetActive(true);
             }
         }
 
@@ -219,7 +221,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    private void Spawn(int type, Vector3 position)
+    public void Spawn(int type, Vector3 position)
     {
         var i = EnemyPools[type].Get();
         i.transform.position = position;

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class BossOne : MonoBehaviour
 {
@@ -13,9 +15,12 @@ public class BossOne : MonoBehaviour
     public GameObject moveEnd1;
     public EnemyManager enemyManager;
     public float gameTime;
-    private bool _startPattern;
+    public bool startPattern;
 
     public int hp, maxHp;
+    public Image hpImage;
+
+    private Coroutine _fireRoutine;
 
     private void Awake()
     {
@@ -34,6 +39,7 @@ public class BossOne : MonoBehaviour
 
     public void OnHit(int dmg)
     {
+        if (!startPattern) return;
         hp -= dmg;
         if (hp <= 0)
         {
@@ -42,6 +48,8 @@ public class BossOne : MonoBehaviour
             {
                 BulletPool.Release(bullet);
             }
+            StopCoroutine(_fireRoutine);
+            StopCoroutine(nameof(Fire));
             enemyManager.NextStage(2);
         }
     }
@@ -50,10 +58,10 @@ public class BossOne : MonoBehaviour
     {
         gameTime += Time.deltaTime;
 
-        if (transform.position.y <= 6 && !_startPattern)
+        if (transform.position.y <= 6 && !startPattern)
         {
-            _startPattern = true;
-            StartCoroutine(Pattern());
+            startPattern = true;
+            _fireRoutine = StartCoroutine(Pattern());
         }
         else
         {
@@ -73,18 +81,41 @@ public class BossOne : MonoBehaviour
                 BulletPool.Release(bullet);
             }
         }
+
+        hpImage.fillAmount = (float) hp / maxHp;
     }
 
     private IEnumerator Pattern()
     {
-        StartCoroutine(Fire());
+        while (startPattern)
+        {
+            yield return StartCoroutine(nameof(Fire));
+            enemyManager.Spawn(1, enemyManager.spawnPoints[1]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[2]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[3]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[4]);
+            yield return new WaitForSeconds(1);
+            
+            yield return StartCoroutine(nameof(Fire));
+            enemyManager.Spawn(1, enemyManager.spawnPoints[19]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[18]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[17]);
+            yield return new WaitForSeconds(0.2f);
+            enemyManager.Spawn(1, enemyManager.spawnPoints[16]);
+            yield return new WaitForSeconds(1);
+        }
         yield break;
     }
 
     private IEnumerator Fire()
     {
         float delay = 0;
-        float speed = 1f;
+        float speed = 2f;
         for (int j = 0; j < 30; j++)
         {
             var i = BulletPool.Get();
@@ -148,6 +179,6 @@ public class BossOne : MonoBehaviour
             spawnedBullet.Add(k);
         }
 
-        yield return null;
+        yield return new WaitForSeconds(delay);
     }
 }
