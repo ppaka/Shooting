@@ -30,11 +30,18 @@ public class Bullet : MonoBehaviour
         }
         else if (other.CompareTag("Enemy"))
         {
-            if (owner == BulletOwner.Player) other.GetComponent<Enemy>().OnHit(stat.atk);
+            if (owner == BulletOwner.Player)
+            {
+                other.GetComponent<Enemy>().OnHit(stat.atk);
+                Player.BulletPools[level - 1].Release(this);
+            }
         }
         else if (other.CompareTag("Player"))
         {
-            if (owner == BulletOwner.Enemy || owner == BulletOwner.BossOne || owner == BulletOwner.BossTwo) other.GetComponent<Player>().OnDamaged(stat.atk);
+            if (owner == BulletOwner.Enemy || owner == BulletOwner.BossOne || owner == BulletOwner.BossTwo)
+            {
+                other.GetComponent<Player>().OnDamaged(stat.atk);
+            }
         }
         else if (other.CompareTag("Boss"))
         {
