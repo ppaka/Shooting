@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EnemyManager : MonoBehaviour
 {
     public Enemy[] enemies;
-    public static IObjectPool<Enemy>[] EnemyPools = new IObjectPool<Enemy>[6];
     public Player player;
     public ItemManager itemManager;
     public float maxSpawnDelay;
     public float curSpawnDelay;
     public int spawnPointRate = 8;
-    public List<Vector3> spawnPoints = new();
+    public List<Vector3> spawnPoints = new List<Vector3>();
 
     public int enemyCount = 0, maxStageOneEnemyCount = 20, maxStageTwoEnemyCount = 40;
 
@@ -23,8 +21,7 @@ public class EnemyManager : MonoBehaviour
     public float maxDelay;
     public float minDelay;
 
-    public List<Enemy> spawnedEnemies = new();
-    public static IObjectPool<Bullet> BulletPool;
+    public List<Enemy> spawnedEnemies = new List<Enemy>();
     public Bullet enemyBulletPrefab;
     public BossOne bossOne;
     public BossTwo bossTwo;
@@ -36,90 +33,6 @@ public class EnemyManager : MonoBehaviour
 
     private void Awake()
     {
-        EnemyPools[0] = new ObjectPool<Enemy>(() => Instantiate(enemies[0]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                enemy.gameObject.SetActive(false);
-            },
-            enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                Destroy(enemy.gameObject);
-            }, false, 20, 5000);
-
-        EnemyPools[1] = new ObjectPool<Enemy>(() => Instantiate(enemies[1]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                enemy.gameObject.SetActive(false);
-            },
-            enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                Destroy(enemy.gameObject);
-            }, false, 20, 5000);
-
-        EnemyPools[2] = new ObjectPool<Enemy>(() => Instantiate(enemies[2]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                enemy.gameObject.SetActive(false);
-            },
-            enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                Destroy(enemy.gameObject);
-            }, false, 20, 5000);
-
-        EnemyPools[3] = new ObjectPool<Enemy>(() => Instantiate(enemies[3]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                enemy.gameObject.SetActive(false);
-            },
-            enemy =>
-            {
-                spawnedEnemies.Remove(enemy);
-                Destroy(enemy.gameObject);
-            }, false, 20, 5000);
-
-        EnemyPools[4] = new ObjectPool<Enemy>(() => Instantiate(enemies[4]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy => { enemy.gameObject.SetActive(false); },
-            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
-
-        EnemyPools[5] = new ObjectPool<Enemy>(() => Instantiate(enemies[5]),
-            enemy =>
-            {
-                enemy.gameObject.SetActive(true);
-                enemy.Setup();
-            }, enemy => { enemy.gameObject.SetActive(false); },
-            enemy => { Destroy(enemy.gameObject); }, false, 20, 5000);
-
-        BulletPool = new ObjectPool<Bullet>(() => Instantiate(enemyBulletPrefab),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20);
-
         SetupSpawn();
     }
 
@@ -141,6 +54,11 @@ public class EnemyManager : MonoBehaviour
         bossTwoDead = true;
         StartCoroutine(StageDelay(stageNum));
     }
+    
+    public void GameEnd()
+    {
+        SceneManager.LoadScene("GameEnd");
+    }
 
     private IEnumerator StageDelay(int stageNum)
     {
@@ -156,8 +74,23 @@ public class EnemyManager : MonoBehaviour
         resultCanvas.SetActive(false);
 
         player.stage = stageNum;
-        bossOneDead = false;
-        bossTwoDead = false;
+
+        if (stageNum == 2)
+        {
+            bossOneDead = true;
+            bossTwoDead = false;
+            player.hp = player.maxHp;
+            player.stage = 2;
+            player.SetAltHp();
+        }
+        else
+        {
+            bossOneDead = false;
+            bossTwoDead = false;
+            player.hp = player.maxHp;
+            player.stage = 1;
+            player.SetAltHp();
+        }
         yield return null;
     }
 
@@ -213,7 +146,7 @@ public class EnemyManager : MonoBehaviour
                 if (enemy.timeSinceFire >= enemy.stat.fireDelay)
                 {
                     enemy.timeSinceFire = 0;
-                    var bullet = BulletPool.Get();
+                    var bullet = Instantiate(enemyBulletPrefab);
                     bullet.stat.atk = (int)enemy.stat.enemyAtk;
                     bullet.transform.position = enemy.transform.position;
                 }
@@ -223,10 +156,12 @@ public class EnemyManager : MonoBehaviour
 
     public void Spawn(int type, Vector3 position)
     {
-        var i = EnemyPools[type].Get();
+        var i = Instantiate(enemies[type]);
+        i.Setup();
         i.transform.position = position;
         i.player = player;
         i.itemManager = itemManager;
+        i.enemyManager = this;
         if (i.type != EnemyType.Npc1 && i.type != EnemyType.Npc2)
         {
             spawnedEnemies.Add(i);

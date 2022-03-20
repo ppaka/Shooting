@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Pool;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -21,7 +20,6 @@ public class Player : MonoBehaviour
     public Bullet[] bullets;
     public float[] fireDelays = { 0.18f, 0.23f, 0.18f, 0.2f, 0.03f };
     public float timeSinceLastFire;
-    public static IObjectPool<Bullet>[] BulletPools = new IObjectPool<Bullet>[5];
 
     private float _offset;
     public float scrollSpeed = 0.5f;
@@ -37,31 +35,19 @@ public class Player : MonoBehaviour
     {
         Time.timeScale = 0;
 
-        BulletPools[0] = new ObjectPool<Bullet>(() => Instantiate(bullets[0]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
-        BulletPools[1] = new ObjectPool<Bullet>(() => Instantiate(bullets[1]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
-        BulletPools[2] = new ObjectPool<Bullet>(() => Instantiate(bullets[2]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
-        BulletPools[3] = new ObjectPool<Bullet>(() => Instantiate(bullets[3]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
-        BulletPools[4] = new ObjectPool<Bullet>(() => Instantiate(bullets[4]),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20, 10000);
-
-        if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
-        else if (stage == 2) altHp = maxAltHp - maxAltHp * 0.3f;
-
+        SetAltHp();
         hp = maxHp;
         timeSinceLastHit = 10;
 
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
         _sr = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetAltHp()
+    {
+        if (stage == 1) altHp = maxAltHp - maxAltHp * 0.1f;
+        else if (stage == 2) altHp = maxAltHp - maxAltHp * 0.3f;
     }
 
     private void Update()
@@ -173,7 +159,7 @@ public class Player : MonoBehaviour
 
     public void UpgradeWeapon(int level)
     {
-        if (level >= 1 && level <= BulletPools.Length) weaponLevel = level;
+        if (level >= 1 && level <= bullets.Length) weaponLevel = level;
     }
 
     private void Fire(int level)
@@ -181,7 +167,7 @@ public class Player : MonoBehaviour
         if (timeSinceLastFire > fireDelays[level - 1])
         {
             timeSinceLastFire = 0;
-            var bullet = BulletPools[level - 1].Get();
+            var bullet = Instantiate(bullets[level - 1]);
             bullet.transform.position = transform.position;
         }
     }

@@ -1,15 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class BossOne : MonoBehaviour
 {
-    public static ObjectPool<Bullet> BulletPool;
-    public List<Bullet> spawnedBullet = new();
+    public List<Bullet> spawnedBullet = new List<Bullet>();
     public Bullet prefab;
     public GameObject canon1, canon2;
     public GameObject moveEnd1;
@@ -24,9 +20,6 @@ public class BossOne : MonoBehaviour
 
     private void Awake()
     {
-        BulletPool = new ObjectPool<Bullet>(() => Instantiate(prefab),
-            bullet => { bullet.gameObject.SetActive(true); }, bullet => { bullet.gameObject.SetActive(false); },
-            bullet => { Destroy(bullet.gameObject); }, true, 20);
         hp = maxHp;
     }
 
@@ -46,7 +39,7 @@ public class BossOne : MonoBehaviour
             gameObject.SetActive(false);
             foreach (var bullet in spawnedBullet)
             {
-                BulletPool.Release(bullet);
+                Destroy(bullet.gameObject);
             }
             StopCoroutine(_fireRoutine);
             StopCoroutine(nameof(Fire));
@@ -78,7 +71,7 @@ public class BossOne : MonoBehaviour
             if (time > 1)
             {
                 spawnedBullet.Remove(bullet);
-                BulletPool.Release(bullet);
+                Destroy(bullet.gameObject);
             }
         }
 
@@ -118,9 +111,9 @@ public class BossOne : MonoBehaviour
         float speed = 2f;
         for (int j = 0; j < 30; j++)
         {
-            var i = BulletPool.Get();
+            var i = Instantiate(prefab);
             i.transform.position = canon1.transform.position;
-            var k = BulletPool.Get();
+            var k = Instantiate(prefab);
             k.transform.position = canon2.transform.position;
             
             i.direction = Vector3.down;
@@ -146,13 +139,13 @@ public class BossOne : MonoBehaviour
         
         for (int j = 0; j < 120; j++)
         {
-            var i = BulletPool.Get();
+            var i = Instantiate(prefab);
             var startPos1 = canon1.transform.position +
                             new Vector3(Mathf.Abs(canon1.transform.position.x - canon2.transform.position.x)*
                                         ((float)j/120), 0, 0);
             i.transform.position = startPos1;
             
-            var k = BulletPool.Get();
+            var k = Instantiate(prefab);
             var startPos2 = canon2.transform.position -
                             new Vector3(Mathf.Abs(canon1.transform.position.x - canon2.transform.position.x)*
                                         ((float)j/120), 0, 0);

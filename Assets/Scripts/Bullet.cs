@@ -25,15 +25,15 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("BulletBorder"))
         {
-            if (owner == BulletOwner.Player) Player.BulletPools[level - 1].Release(this);
-            else if(owner == BulletOwner.Enemy) EnemyManager.BulletPool.Release(this);
+            if (owner == BulletOwner.Player) Destroy(gameObject);
+            else if(owner == BulletOwner.Enemy) Destroy(gameObject);
         }
         else if (other.CompareTag("Enemy"))
         {
             if (owner == BulletOwner.Player)
             {
                 other.GetComponent<Enemy>().OnHit(stat.atk);
-                Player.BulletPools[level - 1].Release(this);
+                Destroy(gameObject);
             }
         }
         else if (other.CompareTag("Player"))

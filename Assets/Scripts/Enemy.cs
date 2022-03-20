@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Pool;
 
 public enum EnemyType
 {
@@ -19,6 +18,7 @@ public class Enemy : MonoBehaviour
     public EnemyType type;
     public Player player;
     public ItemManager itemManager;
+    public EnemyManager enemyManager;
 
     private void Update()
     {
@@ -48,7 +48,9 @@ public class Enemy : MonoBehaviour
             {
                 player.AddScore(stat.maxHp * 100);
             }
-            EnemyManager.EnemyPools[(int)type].Release(this);
+
+            enemyManager.spawnedEnemies.Remove(this);
+            Destroy(gameObject);
         }
     }
 
@@ -60,12 +62,12 @@ public class Enemy : MonoBehaviour
             {
                 var random = Random.Range(1f, 100f);
                 if (random >= 50) itemManager.RandomItem(transform.position);
-                EnemyManager.EnemyPools[(int)type].Release(this);
+                Destroy(gameObject);
             }
             else if (type == EnemyType.Npc2)
             {
                 player.OnDamagedAlt(stat.enemyAtk);
-                EnemyManager.EnemyPools[(int)type].Release(this);
+                Destroy(gameObject);
             }
             else
             {
@@ -76,12 +78,13 @@ public class Enemy : MonoBehaviour
         {
             if (type == EnemyType.Npc1 || type == EnemyType.Npc2)
             {
-                EnemyManager.EnemyPools[(int)type].Release(this);
+                Destroy(gameObject);
             }
             else
             {
                 player.OnDamagedAlt(stat.enemyAtk / 2);
-                EnemyManager.EnemyPools[(int)type].Release(this);
+                enemyManager.spawnedEnemies.Remove(this);
+                Destroy(gameObject);
             }
         }
     }
