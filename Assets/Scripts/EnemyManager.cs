@@ -22,6 +22,7 @@ public class EnemyManager : MonoBehaviour
     public float minDelay;
 
     public List<Enemy> spawnedEnemies = new List<Enemy>();
+    public List<Enemy> spawnedNpc = new List<Enemy>();
     public Bullet enemyBulletPrefab;
     public BossOne bossOne;
     public BossTwo bossTwo;
@@ -30,6 +31,8 @@ public class EnemyManager : MonoBehaviour
     public Image[] images;
     private float _waitingDelay;
     public GameObject resultCanvas;
+    public Text nextStageText;
+    private Coroutine _coroutine;
 
     private void Awake()
     {
@@ -52,7 +55,19 @@ public class EnemyManager : MonoBehaviour
     {
         bossOneDead = true;
         bossTwoDead = true;
-        StartCoroutine(StageDelay(stageNum));
+        foreach (var enemy in spawnedEnemies)
+        {
+            Destroy(enemy.gameObject);
+        }
+
+        foreach (var npc in spawnedNpc)
+        {
+            Destroy(npc.gameObject);
+        }
+        spawnedEnemies.Clear();
+        spawnedNpc.Clear();
+        if(_coroutine != null) StopCoroutine(_coroutine);
+        _coroutine = StartCoroutine(StageDelay(stageNum));
     }
     
     public void GameEnd()
@@ -64,16 +79,19 @@ public class EnemyManager : MonoBehaviour
     private IEnumerator StageDelay(int stageNum)
     {
         resultCanvas.SetActive(true);
+        player.stage = 0;
+        nextStageText.text = "Stage " + stageNum;
         _waitingDelay = 1;
         while (_waitingDelay >= 0)
         {
             _waitingDelay -= Time.deltaTime * 0.25f;
             images[0].fillAmount = _waitingDelay;
             images[1].fillAmount = _waitingDelay;
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
         resultCanvas.SetActive(false);
 
+        enemyCount = 0;
         player.stage = stageNum;
 
         if (stageNum == 2)
@@ -98,27 +116,19 @@ public class EnemyManager : MonoBehaviour
     private void Update()
     {
         if (!player.gameStarted) return;
+        if (Input.GetKeyDown(KeyCode.Alpha8)) NextStage(1);
+        if (Input.GetKeyDown(KeyCode.Alpha9)) NextStage(2);
         curSpawnDelay += Time.deltaTime;
 
         if (player.stage == 1 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageOneEnemyCount)
         {
             Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            /*Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(1, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(2, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(3, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(4, spawnPoints[Random.Range(0, spawnPoints.Count)]);*/
             maxSpawnDelay = Random.Range(minDelay, maxDelay);
             curSpawnDelay = 0;
             enemyCount++;
         }else if (player.stage == 2 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageTwoEnemyCount)
         {
             Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            /*Spawn(0, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(1, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(2, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(3, spawnPoints[Random.Range(0, spawnPoints.Count)]);
-            Spawn(4, spawnPoints[Random.Range(0, spawnPoints.Count)]);*/
             maxSpawnDelay = Random.Range(minDelay, maxDelay);
             curSpawnDelay = 0;
             enemyCount++;
@@ -166,6 +176,10 @@ public class EnemyManager : MonoBehaviour
         if (i.type != EnemyType.Npc1 && i.type != EnemyType.Npc2)
         {
             spawnedEnemies.Add(i);
+        }
+        else
+        {
+            spawnedNpc.Add(i);
         }
     }
 }

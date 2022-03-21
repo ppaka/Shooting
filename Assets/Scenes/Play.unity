@@ -1877,6 +1877,7 @@ MonoBehaviour:
   - {fileID: 364061163}
   - {fileID: 275144320}
   resultCanvas: {fileID: 1072134734}
+  nextStageText: {fileID: 1416695524}
 --- !u!4 &940263062
 Transform:
   m_ObjectHideFlags: 0
@@ -2755,7 +2756,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stage 2
+  m_Text: Stage
 --- !u!222 &1416695525
 CanvasRenderer:
   m_ObjectHideFlags: 0
