@@ -57,6 +57,7 @@ public class EnemyManager : MonoBehaviour
     
     public void GameEnd()
     {
+        RankSaver.Instance.recentScore = player.score;
         SceneManager.LoadScene("GameEnd");
     }
 

@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public float score;
+    public int score;
 
     public float speed = 3;
     public int stage = 1;
@@ -125,7 +126,7 @@ public class Player : MonoBehaviour
 
     public void AddScore(float value)
     {
-        score += value;
+        score += Mathf.FloorToInt(value);
         scoreText.text = score.ToString();
     }
 
@@ -139,6 +140,8 @@ public class Player : MonoBehaviour
         if (hp <= 0)
         {
             Debug.Log("죽음");
+            RankSaver.Instance.recentScore = score;
+            SceneManager.LoadScene("GameEnd");
         }
     }
 
