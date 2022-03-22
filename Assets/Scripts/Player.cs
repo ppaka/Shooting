@@ -17,9 +17,10 @@ public class Player : MonoBehaviour
     private Camera _camera;
     private Animator _animator;
     private SpriteRenderer _sr;
+    public EnemyManager enemyManager;
 
     public Bullet[] bullets;
-    public float[] fireDelays = { 0.18f, 0.23f, 0.18f, 0.2f, 0.03f };
+    public float[] fireDelays = {0.18f, 0.23f, 0.18f, 0.2f, 0.03f};
     public float timeSinceLastFire;
 
     private float _offset;
@@ -83,6 +84,7 @@ public class Player : MonoBehaviour
         uiCanvas.SetActive(true);
         introCanvas.SetActive(false);
         Time.timeScale = 1;
+        enemyManager.NextStage(1);
     }
 
     private void FixedUpdate()
@@ -187,7 +189,7 @@ public class Player : MonoBehaviour
 
     private void SetAnimation(float value)
     {
-        _animator.SetInteger("Input", (int)value);
+        _animator.SetInteger("Input", (int) value);
     }
 
     private void StayInCamera()
@@ -199,5 +201,19 @@ public class Player : MonoBehaviour
         var result = _camera.ViewportToWorldPoint(curPoint);
         result.z = 0;
         transform.position = result;
+    }
+
+    public void FireBomb()
+    {
+        var oneShooting = 60f;
+        var speed = 1f;
+        var angle = 360 / oneShooting;
+        for (var i = 0; i < oneShooting; i++)
+        {
+            var obj = Instantiate(bullets[1], transform.position, Quaternion.identity);
+            obj.direction = new Vector3(speed * Mathf.Cos(Mathf.PI * 2 * i / oneShooting),
+                speed * Mathf.Sin(Mathf.PI * i * 2 / oneShooting));
+            obj.transform.Rotate(new Vector3(0, 0, 360 * i / oneShooting - 90));
+        }
     }
 }

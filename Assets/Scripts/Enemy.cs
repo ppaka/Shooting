@@ -39,17 +39,19 @@ public class Enemy : MonoBehaviour
             {
                 var random = Random.Range(1f, 100f);
                 if (random >= 50) itemManager.RandomItem(transform.position);
+                enemyManager.spawnedNpc.Remove(this);
             }
             if (type == EnemyType.Npc2)
             {
                 player.OnDamagedAlt(stat.enemyAtk);
+                enemyManager.spawnedNpc.Remove(this);
             }
             else
             {
                 player.AddScore(stat.maxHp * 100);
+                enemyManager.spawnedEnemies.Remove(this);
             }
-
-            enemyManager.spawnedEnemies.Remove(this);
+            
             Destroy(gameObject);
         }
     }
@@ -62,11 +64,13 @@ public class Enemy : MonoBehaviour
             {
                 var random = Random.Range(1f, 100f);
                 if (random >= 50) itemManager.RandomItem(transform.position);
+                enemyManager.spawnedNpc.Remove(this);
                 Destroy(gameObject);
             }
             else if (type == EnemyType.Npc2)
             {
                 player.OnDamagedAlt(stat.enemyAtk);
+                enemyManager.spawnedNpc.Remove(this);
                 Destroy(gameObject);
             }
             else
@@ -78,6 +82,7 @@ public class Enemy : MonoBehaviour
         {
             if (type == EnemyType.Npc1 || type == EnemyType.Npc2)
             {
+                enemyManager.spawnedNpc.Remove(this);
                 Destroy(gameObject);
             }
             else

@@ -50,4 +50,19 @@ public class RankSaver : MonoBehaviour
         scores.Add((name, score));
         scores.Sort((tuple, valueTuple) => valueTuple.score.CompareTo(tuple.score));
     }
+
+    public void Clean()
+    {
+        var newList = new List<(string name, int score)>();
+        for (int i = 0; i < scores.Count; i++)
+        {
+            if (i >= 5)
+            {
+                break;
+            }
+            newList.Add(scores[i]);
+        }
+
+        scores = newList;
+    }
 }

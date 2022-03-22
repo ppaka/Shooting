@@ -847,6 +847,8 @@ MonoBehaviour:
   - {fileID: 4821099506769187890, guid: 89da75587c01fd74c8107184faf06a32, type: 3}
   - {fileID: 2481910318846055987, guid: df086a24c56304740bc9cdc1d8b76961, type: 3}
   - {fileID: 6947845372591603469, guid: 0f0a9b3033cdf914bad804ec91219623, type: 3}
+  - {fileID: 1268088617423013132, guid: f6111dc82e20d404c8dc60dd2400cf3a, type: 3}
+  - {fileID: 1268088617423013132, guid: b9c74aaaea8c1b84ab43efcf8cf8a4e8, type: 3}
 --- !u!4 &393187505
 Transform:
   m_ObjectHideFlags: 0
@@ -1868,6 +1870,7 @@ MonoBehaviour:
   maxDelay: 3
   minDelay: 0.25
   spawnedEnemies: []
+  spawnedNpc: []
   enemyBulletPrefab: {fileID: 3724985467805406110, guid: 1f83d2f270784a643b5c382cba4af62e, type: 3}
   bossOne: {fileID: 504536742}
   bossTwo: {fileID: 1056478665}
@@ -3255,6 +3258,7 @@ MonoBehaviour:
   timeSinceLastHit: 0
   invincibleTime: 1.5
   invincibleEffectTime: 1.5
+  enemyManager: {fileID: 940263061}
   bullets:
   - {fileID: 6410580108843985289, guid: f08f0587a8bfcf54f83196689afdc00f, type: 3}
   - {fileID: 6228794750140959013, guid: b541ec1e573ec154d80299d3c3548052, type: 3}

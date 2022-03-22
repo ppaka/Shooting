@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,11 +10,11 @@ public class RankingManager : MonoBehaviour
     public Transform listParent;
     public ListItem prefab;
     
-    private bool _isSaved;
+    private bool _canSave;
     
     private void Start()
     {
-        _isSaved = false;
+        _canSave = false;
         Load();
     }
 
@@ -21,29 +22,43 @@ public class RankingManager : MonoBehaviour
     {
         var children = listParent.GetComponentsInChildren<ListItem>();
         if (children.Length != 0)
+        {
             foreach (var child in children)
             {
                 Destroy(child.gameObject);
             }
+        }
 
-        foreach (var (name, score) in RankSaver.Instance.scores)
+        for (int i = 0; i < RankSaver.Instance.scores.Count; i++)
         {
+            if (i >= 5) break; 
             var obj = Instantiate(prefab, listParent);
-            obj.nameText.text = name;
-            obj.scoreText.text = score.ToString();
+            obj.nameText.text = RankSaver.Instance.scores[i].name;
+            obj.scoreText.text = RankSaver.Instance.scores[i].score.ToString();
+
+            if (RankSaver.Instance.recentScore > RankSaver.Instance.scores[i].score)
+            {
+                _canSave = true;
+            }
+        }
+
+        if (RankSaver.Instance.scores.Count < 5)
+        {
+            _canSave = true;
         }
     }
 
     public void Save()
     {
-        if (nameField.text == String.Empty || _isSaved)
+        if (nameField.text == string.Empty || !_canSave)
         {
             return;
         }
 
         RankSaver.Instance.Save(nameField.text, RankSaver.Instance.recentScore);
-        _isSaved = true;
+        RankSaver.Instance.Clean();
         Load();
+        _canSave = false;
     }
 
     public void Retry()

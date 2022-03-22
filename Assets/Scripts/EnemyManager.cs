@@ -19,6 +19,7 @@ public class EnemyManager : MonoBehaviour
 
     [Header("SpawnDelaySettings", order = 2)]
     public float maxDelay;
+
     public float minDelay;
 
     public List<Enemy> spawnedEnemies = new List<Enemy>();
@@ -57,19 +58,22 @@ public class EnemyManager : MonoBehaviour
         bossTwoDead = true;
         foreach (var enemy in spawnedEnemies)
         {
-            Destroy(enemy.gameObject);
+            if (enemy != null)
+                Destroy(enemy.gameObject);
         }
 
+        spawnedEnemies.Clear();
         foreach (var npc in spawnedNpc)
         {
-            Destroy(npc.gameObject);
+            if (npc != null)
+                Destroy(npc.gameObject);
         }
-        spawnedEnemies.Clear();
+
         spawnedNpc.Clear();
-        if(_coroutine != null) StopCoroutine(_coroutine);
+        if (_coroutine != null) StopCoroutine(_coroutine);
         _coroutine = StartCoroutine(StageDelay(stageNum));
     }
-    
+
     public void GameEnd()
     {
         RankSaver.Instance.recentScore = player.score;
@@ -89,6 +93,7 @@ public class EnemyManager : MonoBehaviour
             images[1].fillAmount = _waitingDelay;
             yield return null;
         }
+
         resultCanvas.SetActive(false);
 
         enemyCount = 0;
@@ -110,6 +115,7 @@ public class EnemyManager : MonoBehaviour
             player.stage = 1;
             player.SetAltHp();
         }
+
         yield return null;
     }
 
@@ -126,7 +132,8 @@ public class EnemyManager : MonoBehaviour
             maxSpawnDelay = Random.Range(minDelay, maxDelay);
             curSpawnDelay = 0;
             enemyCount++;
-        }else if (player.stage == 2 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageTwoEnemyCount)
+        }
+        else if (player.stage == 2 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageTwoEnemyCount)
         {
             Spawn(Random.Range(0, enemies.Length), spawnPoints[Random.Range(0, spawnPoints.Count)]);
             maxSpawnDelay = Random.Range(minDelay, maxDelay);
@@ -141,7 +148,7 @@ public class EnemyManager : MonoBehaviour
                 bossOne.gameObject.SetActive(true);
             }
         }
-        else if(player.stage == 2 && enemyCount >= maxStageTwoEnemyCount)
+        else if (player.stage == 2 && enemyCount >= maxStageTwoEnemyCount)
         {
             if (!bossTwoDead)
             {
@@ -158,7 +165,7 @@ public class EnemyManager : MonoBehaviour
                 {
                     enemy.timeSinceFire = 0;
                     var bullet = Instantiate(enemyBulletPrefab);
-                    bullet.stat.atk = (int)enemy.stat.enemyAtk;
+                    bullet.stat.atk = (int) enemy.stat.enemyAtk;
                     bullet.transform.position = enemy.transform.position;
                 }
             }

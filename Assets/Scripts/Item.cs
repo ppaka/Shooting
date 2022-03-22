@@ -5,7 +5,9 @@ public enum ItemType
     Upgrade,
     Invincible,
     Heal,
-    AltHeal
+    AltHeal,
+    HealAll,
+    Bomb
 }
 
 public class Item : MonoBehaviour
@@ -42,6 +44,17 @@ public class Item : MonoBehaviour
             {
                 player.altHp += player.maxAltHp * 0.25f;
                 player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
+            }
+            else if (type == ItemType.HealAll)
+            {
+                player.hp += player.maxHp * 0.25f;
+                player.hp = Mathf.Clamp(player.hp, 0, player.maxHp);
+                player.altHp += player.maxAltHp * 0.25f;
+                player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
+            }
+            else if (type == ItemType.Bomb)
+            {
+                player.FireBomb();
             }
             player.AddScore(100);
             Destroy(gameObject);
