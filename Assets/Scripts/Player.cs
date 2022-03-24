@@ -150,9 +150,12 @@ public class Player : MonoBehaviour
     public void OnDamagedAlt(float damage)
     {
         altHp -= damage;
+        _camera.GetComponent<CameraShake>().VibrateForTime(0.4f);
         if (altHp <= 0)
         {
             Debug.Log("보조 체력 죽음");
+            RankSaver.Instance.recentScore = score;
+            SceneManager.LoadScene("GameEnd");
         }
     }
 
@@ -207,7 +210,6 @@ public class Player : MonoBehaviour
     {
         var oneShooting = 60f;
         var speed = 1f;
-        var angle = 360 / oneShooting;
         for (var i = 0; i < oneShooting; i++)
         {
             var obj = Instantiate(bullets[1], transform.position, Quaternion.identity);

@@ -86,11 +86,11 @@ public class BossTwo : MonoBehaviour
             yield return StartCoroutine(nameof(Fire));
             enemyManager.Spawn(1, enemyManager.spawnPoints[1]);
             yield return new WaitForSeconds(0.2f);
-            enemyManager.Spawn(1, enemyManager.spawnPoints[2]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[2]);
             yield return new WaitForSeconds(0.2f);
             enemyManager.Spawn(1, enemyManager.spawnPoints[3]);
             yield return new WaitForSeconds(0.2f);
-            enemyManager.Spawn(1, enemyManager.spawnPoints[4]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[4]);
             
             yield return new WaitForSeconds(0.4f);
             enemyManager.Spawn(1, enemyManager.spawnPoints[9]);
@@ -100,23 +100,23 @@ public class BossTwo : MonoBehaviour
             yield return new WaitForSeconds(1);
             
             yield return StartCoroutine(nameof(Fire));
-            enemyManager.Spawn(1, enemyManager.spawnPoints[19]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[19]);
             yield return new WaitForSeconds(0.2f);
             enemyManager.Spawn(1, enemyManager.spawnPoints[18]);
             yield return new WaitForSeconds(0.2f);
-            enemyManager.Spawn(1, enemyManager.spawnPoints[17]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[17]);
             yield return new WaitForSeconds(0.2f);
             enemyManager.Spawn(1, enemyManager.spawnPoints[16]);
             
             yield return new WaitForSeconds(0.4f);
             enemyManager.Spawn(0, enemyManager.spawnPoints[9]);
-            enemyManager.Spawn(1, enemyManager.spawnPoints[10]);
-            enemyManager.Spawn(1, enemyManager.spawnPoints[11]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[10]);
+            enemyManager.Spawn(0, enemyManager.spawnPoints[11]);
             enemyManager.Spawn(0, enemyManager.spawnPoints[12]);
             yield return new WaitForSeconds(1);
             
             yield return StartCoroutine(nameof(Fire2));
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.5f);
         }
         yield break;
     }
@@ -191,16 +191,16 @@ public class BossTwo : MonoBehaviour
         yield return new WaitForSeconds(1f);
         
         enemyManager.Spawn(0, enemyManager.spawnPoints[9]);
-        enemyManager.Spawn(1, enemyManager.spawnPoints[10]);
-        enemyManager.Spawn(1, enemyManager.spawnPoints[11]);
+        enemyManager.Spawn(0, enemyManager.spawnPoints[10]);
+        enemyManager.Spawn(0, enemyManager.spawnPoints[11]);
         enemyManager.Spawn(0, enemyManager.spawnPoints[12]);
         
         yield return new WaitForSeconds(1f);
         
-        enemyManager.Spawn(1, enemyManager.spawnPoints[9]);
-        enemyManager.Spawn(0, enemyManager.spawnPoints[10]);
-        enemyManager.Spawn(0, enemyManager.spawnPoints[11]);
-        enemyManager.Spawn(1, enemyManager.spawnPoints[12]);
+        enemyManager.Spawn(0, enemyManager.spawnPoints[9]);
+        enemyManager.Spawn(1, enemyManager.spawnPoints[10]);
+        enemyManager.Spawn(1, enemyManager.spawnPoints[11]);
+        enemyManager.Spawn(0, enemyManager.spawnPoints[12]);
         
         yield return new WaitForSeconds(1f);
 
