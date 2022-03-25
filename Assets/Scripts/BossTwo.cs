@@ -42,8 +42,7 @@ public class BossTwo : MonoBehaviour
                 Destroy(bullet.gameObject);
             }
             StopCoroutine(_fireRoutine);
-            StopCoroutine(nameof(Fire));
-            StopCoroutine(nameof(Fire2));
+            StopAllCoroutines();
             enemyManager.GameEnd();
         }
     }
@@ -114,7 +113,8 @@ public class BossTwo : MonoBehaviour
             enemyManager.Spawn(0, enemyManager.spawnPoints[11]);
             enemyManager.Spawn(0, enemyManager.spawnPoints[12]);
             yield return new WaitForSeconds(1);
-            
+
+            StartCoroutine(Fire3());
             yield return StartCoroutine(nameof(Fire2));
             yield return new WaitForSeconds(1.5f);
         }
@@ -240,5 +240,46 @@ public class BossTwo : MonoBehaviour
         }
 
         yield return new WaitForSeconds(delay);
+    }
+
+    private IEnumerator Fire3()
+    {
+        var oneShooting = 60f;
+        var speed = 1f;
+        for (var i = 0; i < oneShooting; i++)
+        {
+            var obj = Instantiate(prefab, new Vector3(0, 4, 0), Quaternion.identity);
+            obj.direction = new Vector3(speed * Mathf.Cos(Mathf.PI * 2 * i / oneShooting),
+                speed * Mathf.Sin(Mathf.PI * 2 * i / oneShooting));
+            obj.transform.Rotate(new Vector3(0, 0, 360 * i / oneShooting - 90));
+            obj.owner = BulletOwner.Enemy;
+            obj.speed = speed;
+        }
+
+        yield return new WaitForSeconds(1);
+        
+        for (var i = 0; i < oneShooting; i++)
+        {
+            var obj = Instantiate(prefab, new Vector3(0, 4, 0), Quaternion.identity);
+            obj.direction = new Vector3(speed * Mathf.Cos(Mathf.PI * 2 * i / oneShooting),
+                speed * Mathf.Sin(Mathf.PI * 2 * i / oneShooting));
+            obj.transform.Rotate(new Vector3(0, 0, 360 * i / oneShooting - 90));
+            obj.owner = BulletOwner.Enemy;
+            obj.speed = speed;
+        }
+
+        yield return new WaitForSeconds(1);
+        
+        for (var i = 0; i < oneShooting; i++)
+        {
+            var obj = Instantiate(prefab, new Vector3(0, 4, 0), Quaternion.identity);
+            obj.direction = new Vector3(speed * Mathf.Cos(Mathf.PI * 2 * i / oneShooting),
+                speed * Mathf.Sin(Mathf.PI * 2 * i / oneShooting));
+            obj.transform.Rotate(new Vector3(0, 0, 360 * i / oneShooting - 90));
+            obj.owner = BulletOwner.Enemy;
+            obj.speed = speed;
+        }
+        
+        yield return new WaitForSeconds(0.5f);
     }
 }

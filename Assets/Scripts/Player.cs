@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -30,6 +32,8 @@ public class Player : MonoBehaviour
     public GameObject uiCanvas, introCanvas;
     public Image hpImage, altHpImage;
     public Text scoreText, hpText, altHpText;
+
+    public ParticleSystem hpHealParticle,altHpHealParticle;
 
     public bool gameStarted;
 
@@ -72,8 +76,8 @@ public class Player : MonoBehaviour
         StayInCamera();
         BgScroll();
 
-        hpText.text = (hp / maxHp * 100).ToString();
-        altHpText.text = (Mathf.Abs(altHp - maxAltHp) / maxAltHp * 100).ToString();
+        hpText.text = Mathf.Floor(hp / maxHp * 100).ToString();
+        altHpText.text = Mathf.Floor(Mathf.Abs(altHp - maxAltHp) / maxAltHp * 100).ToString();
         hpImage.fillAmount = hp / maxHp;
         altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
     }
@@ -83,8 +87,19 @@ public class Player : MonoBehaviour
         gameStarted = true;
         uiCanvas.SetActive(true);
         introCanvas.SetActive(false);
-        Time.timeScale = 1;
         enemyManager.NextStage(1);
+        StartCoroutine(TimeTween());
+    }
+
+    IEnumerator TimeTween()
+    {
+        while (Time.timeScale <= 1)
+        {
+            Time.timeScale += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        Time.timeScale = 1;
     }
 
     private void FixedUpdate()
@@ -139,6 +154,7 @@ public class Player : MonoBehaviour
         invincibleEffectTime = 1.5f;
         invincibleTime = 1.5f;
         hp -= damage;
+        hp = Mathf.FloorToInt(hp);
         if (hp <= 0)
         {
             Debug.Log("죽음");
@@ -150,6 +166,7 @@ public class Player : MonoBehaviour
     public void OnDamagedAlt(float damage)
     {
         altHp -= damage;
+        altHp = Mathf.FloorToInt(altHp);
         _camera.GetComponent<CameraShake>().VibrateForTime(0.4f);
         if (altHp <= 0)
         {
@@ -214,7 +231,7 @@ public class Player : MonoBehaviour
         {
             var obj = Instantiate(bullets[1], transform.position, Quaternion.identity);
             obj.direction = new Vector3(speed * Mathf.Cos(Mathf.PI * 2 * i / oneShooting),
-                speed * Mathf.Sin(Mathf.PI * i * 2 / oneShooting));
+                speed * Mathf.Sin(Mathf.PI * 2 * i / oneShooting));
             obj.transform.Rotate(new Vector3(0, 0, 360 * i / oneShooting - 90));
         }
     }

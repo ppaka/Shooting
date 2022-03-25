@@ -39,11 +39,13 @@ public class Item : MonoBehaviour
             {
                 player.hp += player.maxHp * 0.25f;
                 player.hp = Mathf.Clamp(player.hp, 0, player.maxHp);
+                player.hpHealParticle.Play();
             }
             else if (type == ItemType.AltHeal)
             {
                 player.altHp += player.maxAltHp * 0.25f;
                 player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
+                player.altHpHealParticle.Play();
             }
             else if (type == ItemType.HealAll)
             {
@@ -51,6 +53,8 @@ public class Item : MonoBehaviour
                 player.hp = Mathf.Clamp(player.hp, 0, player.maxHp);
                 player.altHp += player.maxAltHp * 0.25f;
                 player.altHp = Mathf.Clamp(player.altHp, 0, player.maxAltHp);
+                player.hpHealParticle.Play();
+                player.altHpHealParticle.Play();
             }
             else if (type == ItemType.Bomb)
             {
