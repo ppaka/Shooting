@@ -56,6 +56,13 @@ public class EnemyManager : MonoBehaviour
     {
         bossOneDead = true;
         bossTwoDead = true;
+        KillAll();
+        if (_coroutine != null) StopCoroutine(_coroutine);
+        _coroutine = StartCoroutine(StageDelay(stageNum));
+    }
+
+    private void KillAll()
+    {
         foreach (var enemy in spawnedEnemies)
         {
             if (enemy != null)
@@ -70,8 +77,6 @@ public class EnemyManager : MonoBehaviour
         }
 
         spawnedNpc.Clear();
-        if (_coroutine != null) StopCoroutine(_coroutine);
-        _coroutine = StartCoroutine(StageDelay(stageNum));
     }
 
     public void GameEnd()
@@ -122,8 +127,19 @@ public class EnemyManager : MonoBehaviour
     private void Update()
     {
         if (!player.gameStarted) return;
-        if (Input.GetKeyDown(KeyCode.Alpha8)) NextStage(1);
-        if (Input.GetKeyDown(KeyCode.Alpha9)) NextStage(2);
+        if (player.canInput)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha8)) NextStage(1);
+            if (Input.GetKeyDown(KeyCode.Alpha9)) NextStage(2);
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                if (bossOne.gameObject.activeSelf) bossOne.OnHit(int.MaxValue);
+                if (bossTwo.gameObject.activeSelf) bossTwo.OnHit(int.MaxValue);
+                KillAll();
+            }
+            if (Input.GetKeyDown(KeyCode.O)) Spawn(4, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+            if (Input.GetKeyDown(KeyCode.P)) Spawn(5, spawnPoints[Random.Range(0, spawnPoints.Count)]);
+        }
         curSpawnDelay += Time.deltaTime;
 
         if (player.stage == 1 && curSpawnDelay > maxSpawnDelay && enemyCount < maxStageOneEnemyCount)

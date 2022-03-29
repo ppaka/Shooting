@@ -65,4 +65,9 @@ public class RankingManager : MonoBehaviour
     {
         SceneManager.LoadScene("Scenes/Play");
     }
+
+    public void Exit()
+    {
+        SceneManager.LoadScene("Title");
+    }
 }

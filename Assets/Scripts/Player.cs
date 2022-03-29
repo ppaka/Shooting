@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -36,6 +35,10 @@ public class Player : MonoBehaviour
     public ParticleSystem hpHealParticle,altHpHealParticle;
 
     public bool gameStarted;
+    public bool forceInvincible;
+    public bool canInput;
+
+    public InputField hpInput, altHpInput;
 
     private void Awake()
     {
@@ -60,18 +63,27 @@ public class Player : MonoBehaviour
     {
         if (!gameStarted)
         {
-            if (Input.GetKeyDown(KeyCode.Space)) StartGame();
+            if (Input.GetKeyDown(KeyCode.Space)) { StartGame(); canInput = true; }
             else return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) UpgradeWeapon(1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) UpgradeWeapon(3);
-        if (Input.GetKeyDown(KeyCode.Alpha4)) UpgradeWeapon(4);
-        if (Input.GetKeyDown(KeyCode.Alpha5)) UpgradeWeapon(5);
+        if (canInput)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene("Title");
+            if (Input.GetKeyDown(KeyCode.Alpha1)) UpgradeWeapon(1);
+            if (Input.GetKeyDown(KeyCode.Alpha2)) UpgradeWeapon(2);
+            if (Input.GetKeyDown(KeyCode.Alpha3)) UpgradeWeapon(3);
+            if (Input.GetKeyDown(KeyCode.Alpha4)) UpgradeWeapon(4);
+            if (Input.GetKeyDown(KeyCode.Alpha5)) UpgradeWeapon(5);
+            if (Input.GetKeyDown(KeyCode.Alpha6)) forceInvincible = true;
+            if (Input.GetKeyDown(KeyCode.Alpha7)) forceInvincible = false;
+            if (Input.GetKeyDown(KeyCode.LeftBracket)) { canInput = false; hpInput.gameObject.SetActive(true); }
+            if (Input.GetKeyDown(KeyCode.RightBracket)) { canInput = false; altHpInput.gameObject.SetActive(true); }
+        }
 
         Clock();
         InvincibleEffect();
+        if (forceInvincible) { timeSinceLastHit = 0; _sr.color = new Color(_sr.color.r, _sr.color.g, _sr.color.b, 0.5f); }
         Move();
         StayInCamera();
         BgScroll();
@@ -80,6 +92,24 @@ public class Player : MonoBehaviour
         altHpText.text = Mathf.Floor(Mathf.Abs(altHp - maxAltHp) / maxAltHp * 100).ToString();
         hpImage.fillAmount = hp / maxHp;
         altHpImage.fillAmount = Mathf.Abs(altHp - maxAltHp) / maxAltHp;
+    }
+
+    public void ForceSetHp(string value)
+    {
+        hpInput.gameObject.SetActive(false);
+        canInput = true;
+        if (value == "") return;
+        var i = int.Parse(value);
+        hp = i * 0.01f * maxHp;
+    }
+
+    public void ForceSetAltHp(string value)
+    {
+        altHpInput.gameObject.SetActive(false);
+        canInput = true;
+        if (value == "") return;
+        var i = int.Parse(value);
+        altHp = Mathf.Abs(i * 0.01f * maxAltHp - maxAltHp);
     }
 
     private void StartGame()
