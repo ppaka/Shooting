@@ -6,7 +6,8 @@ public class TitleScript : MonoBehaviour
 {
     public void Play()
     {
-        SceneManager.LoadScene("Play");
+        SceneLoader.Instance.LoadScene("Play");
+        //SceneManager.LoadScene("Play");
     }
 
     public void Quit()

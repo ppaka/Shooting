@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class RankingManager : MonoBehaviour
@@ -63,11 +60,11 @@ public class RankingManager : MonoBehaviour
 
     public void Retry()
     {
-        SceneManager.LoadScene("Scenes/Play");
+        SceneLoader.Instance.LoadScene("Play");
     }
 
     public void Exit()
     {
-        SceneManager.LoadScene("Title");
+        SceneLoader.Instance.LoadScene("Title");
     }
 }
